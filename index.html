@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+  <title>Symocolon Portfolio</title>
+
+<style>
+  .page-section {
+    display: none;
+    opacity: 0;
+    transition: opacity 1.0s ease;
+  }
+  .page-section.active {
+    display: block;
+    opacity: 1;
+  }
+
+  .bg-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.1; /* Optional: dim the image for text readability */
+  }
+
+  .dual-section {
+    display: flex;
+    height: 430px;
+    transition: all 0.5s ease;
+  }
+
+  .section-left,
+  .section-right {
+    width: 50%;
+    transition: all 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    overflow: hidden;
+    position: relative;
+    flex-direction: column;
+    z-index: 2;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .section-left h2,
+  .section-right h2 {
+    transition: transform 0.5s ease, opacity 0.5s ease, translate 0.5s ease;
+    z-index: 2;
+    font-size: 2.5rem;
+    margin-bottom: -5rem;
+    align-self: flex-start;
+  }
+
+  .text-block {
+    max-width: 400px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .description {
+    opacity: 0;
+    transform: translateY(20px) translateX(20px);
+    transition: opacity 0.1s ease, transform 0.5s ease;
+    max-width: 200px;
+    align-self: flex-start;
+    text-align: left;
+    font-size: 1rem;
+    color: #333;
+  }
+
+  /* Hover effects */
+  .hover-left .section-left {
+    transform: translateX(5%);
+  }
+
+  .hover-left .section-left h2 {
+    margin-bottom: 0rem;
+    transform: translateY(-10px) translateX(20px);
+    opacity: 0.8;
+  }
+
+  .hover-left .section-left .description {
+    opacity: 1;
+    transform: translateY(0px) translateX(40px);
+  }
+
+  .hover-left .section-right {
+    opacity: 0.3;
+    transform: translateX(20%);
+  }
+
+  .hover-right .section-right {
+    transform: translateX(-10%);
+  }
+
+  .hover-right .section-right h2 {
+    margin-bottom: 0rem;
+    transform: translateY(-10px) translateX(-20px);
+    opacity: 0.8;
+  }
+
+  .hover-right .section-right .description {
+    opacity: 1;
+    transform: translateY(0) translateX(0);
+  }
+
+  .hover-right .section-left {
+    opacity: 0.3;
+    transform: translateX(-20%);
+  }
+
+  /* Image clip and transition */
+  .bg-img {
+    position: absolute;
+    top: 0;
+    height: 400px;
+    width: 50vw;
+    object-fit: cover;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .bg-left {
+    left: 0;
+    transition: clip-path 1.0s ease;
+    clip-path: inset(0 51% 28% 0);
+  }
+
+  .bg-right {
+    right: 0;
+    transition: clip-path 1.0s ease;
+    clip-path: inset(0 0 28% 49%);
+  }
+
+  .hover-right .bg-right {
+    clip-path: inset(0 0 28% 0);
+  }
+
+  .hover-right .bg-left {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  .hover-left .bg-right {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  .hover-left .bg-left {
+    clip-path: inset(0 0 28% 0);
+  }
+
+  /* Center stacked images */
+  .center-images {
+    position: absolute;
+    left: 51%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    width: 600px;
+    height: auto;
+  }
+
+  .center-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 600px;
+    height: auto;
+    transition: transform 0.3s ease;
+  }
+
+  .center-img:nth-child(2) {
+    transform: translate(0px, 0px);
+    z-index: -1;
+  }
+
+  .shadow-container {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -10px 20px -10px rgba(0, 0, 0, 0.2);
+    background-color: #f8f9fa;
+  }
+
+  .card.custom-card {
+    height: 300px; /* or whatever you need */
+  }
+  /*project Page*/
+  .card-img-top {
+    object-fit: cover;
+    height: 200px;
+  }
+  .card-title {
+    font-weight: bold;
+  }
+  .badge {
+    cursor: pointer;
+  }
+
+  .card-hover {
+    overflow: hidden; /* Ensures image stays inside */
+    transition: box-shadow 0.3s ease;
+  }
+
+  .card-hover:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  }
+
+  .card-hover .card-img-top {
+    transition: transform 0.5s ease;
+  }
+
+  .card-hover:hover .card-img-top {
+    transform: scale(1.1);
+  }
+
+  .modal-img {
+    width: 100%;
+    height: 500px;         /* or 100% if you want it to fill parent completely */
+    object-fit: cover;     /* Makes the image fill and crop */
+    display: block;
+  }
+
+  .carousel-control-prev,
+  .carousel-control-next {
+    background-color: rgba(0, 0, 0, 0.5);  /* black with 0.5 opacity */
+    width: 50px;     /* optional: adjust size */
+    height: 100%;    /* optional: full height for vertical centering */
+  }
+
+  /* 🔁 Responsive Behavior */
+  @media (max-width: 768px) {
+  .dual-section {
+    height: 500px; /* shrink height */
+  }
+
+  .section-left,
+  .section-right {
+    margin-top: 50%;
+    padding: 1rem;
+  }
+
+  .section-left h2,
+  .section-right h2 {
+    font-size: 1.5rem;
+  }
+
+  .description {
+    font-size: 0.9rem;
+    max-width: 100%;
+  }
+
+  .center-images {
+    width: 90%;
+  }
+
+  .center-img {
+    
+    top: 50%;
+    left: 20%;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  
+}
+
+</style>
+
+</head>
+<body>
+  
+  <div class="wrapper d-flex flex-column min-vh-100">
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+      <div class="container-fluid">
+        <a class="navbar-brand ms-5" href="#home">Symocolon</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end me-5" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link active" href="#home">About Me</a></li>
+            <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+            <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main class="flex-grow-1">
+      <section id="home" class="page-section active">
+        <div class="dual-section" id="dualSection">
+          <div class="section-left " id="left">
+            <img src="gameDoodle.png" class="bg-image" />
+            <div class="text-block">
+              <h2>Game Programmer</h2>
+              <p class="description">This is the left section description. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            </div>
+          </div>
+          
+          <div class="section-right " id="right">
+            <img src="assetDoodle.png" class="bg-image" />
+            <div class="text-block">
+              <h2>Asset Creation</h2>
+              <p class="description">This is the right section description. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            </div>
+          </div>
+
+          <div class="center-images">
+            <img src="img_2.png" class="center-img bg-right" alt="Game Image" />
+            <img src="img_1.png" class="center-img bg-left" alt="Software Image" />
+          </div>
+        </div>
+
+        <div class="shadow-container">
+          <div class="container py-5">
+            <h3 class="mb-4">My Expertise</h3>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+
+              <!-- Card 1 -->
+              <div class="col">
+                <div class="card custom-card text-center p-3">
+                  <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <!-- Icon -->
+                    <i class="fi fi-sr-console-controller mb-3" style="font-size: 2.5rem; opacity: 0.4;"></i>
+
+                    <!-- Title -->
+                    <h5 class="card-title">Game Developer</h5>
+
+                    <!-- Text -->
+                    <p class="card-text">Builds interactive and engaging experiences with Unity and C#.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 2 -->
+              <div class="col">
+                <div class="card custom-card text-center p-3">
+                  <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <!-- Icon -->
+                    <i class="fi fi-sr-pencil-paintbrush mb-3" style="font-size: 2.3rem; opacity: 0.4;"></i>
+
+                    <!-- Title -->
+                    <h5 class="card-title">Asset Designer</h5>
+
+                    <!-- Text -->
+                    <p class="card-text">Creates visual elements, icons, and 2D/3D models for games and interfaces.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 3 -->
+              <div class="col">
+                <div class="card custom-card text-center p-3">
+                  <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <!-- Icon -->
+                    <i class="fi fi-sr-square-terminal mb-3" style="font-size: 2.3rem; opacity: 0.4;"></i>
+
+                    <!-- Title -->
+                    <h5 class="card-title">Programmer</h5>
+
+                    <!-- Text -->
+                    <p class="card-text">Experienced in logic, backend systems, and gameplay mechanics.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 4 -->
+              <div class="col">
+                <div class="card custom-card text-center p-3">
+                  <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <!-- Icon -->
+                    <i class="fi fi-sr-vr-cardboard mb-3" style="font-size: 2.3rem; opacity: 0.4;"></i>
+
+                    <!-- Title -->
+                    <h5 class="card-title">AR/VR </h5>
+
+                    <!-- Text -->
+                    <p class="card-text">Designs and builds immersive AR/VR applications using Unity and XR tools.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="projects" class="page-section animated-section">
+        <div class="container py-5">
+          <div class="row align-items-center mb-5">
+            <div class="col-lg-6">
+              <h2 class="fw-bold display-5">My Work</h2>
+              <p class="text-dark">
+                I develop interactive games, simulations, and learning systems using Unity, C++, and AR/VR technology.<br><br>
+                Focused on creating logic-driven environments, visual scripting mechanics, and immersive user experiences. From educational tools and virtual interactions to spatial simulations and responsive UI, I aim to build systems that are both functional and engaging.
+              </p>
+              <!-- Tags (non-functional, for now) -->
+              <div class="mt-3">
+                <span class="badge bg-light text-dark me-2">All</span>
+                <span class="badge bg-secondary me-2">Mobile</span>
+                <span class="badge bg-secondary me-2">AR/VR</span>
+                <span class="badge bg-secondary">OpenGL</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Project Cards -->
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+
+            <!-- Project 1 -->
+            <div class="col">
+              <div class="card h-100 card-hover" data-bs-toggle="modal" data-bs-target="#project1Modal" style="cursor: pointer;">
+                <img src="Theraputic Biomtech.jpg" class="card-img-top" alt="Project 1">
+                <div class="card-body">
+                  <h5 class="card-title">Theraputic BiomAdTech</h5>
+                  <p class="card-text"><small class="text-muted">AR</small></p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Project 2 -->
+            <div class="col">
+              <div class="card h-100 card-hover" data-bs-toggle="modal" data-bs-target="#project2Modal" style="cursor: pointer;">
+                <img src="VR.jpg" class="card-img-top" alt="Project 2">
+                <div class="card-body">
+                  <h5 class="card-title">VRMedSim</h5>
+                  <p class="card-text"><small class="text-muted">VR</small></p>
+                </div>
+              </div>
+            </div>
+            <!-- Project 3 -->
+            <div class="col">
+              <div class="card h-100 card-hover" data-bs-toggle="modal" data-bs-target="#project3Modal" style="cursor: pointer;">
+                <img src="Rehab.png" class="card-img-top" alt="Project 3">
+                <div class="card-body">
+                  <h5 class="card-title">Rehab Simulation</h5>
+                  <p class="card-text"><small class="text-muted">VR</small></p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Add more cards as needed -->
+
+             <!-- Project 4 -->
+            <div class="col">
+              <div class="card h-100 card-hover" data-bs-toggle="modal" data-bs-target="#project4Modal" style="cursor: pointer;">
+                <img src="BTP.png" class="card-img-top" alt="Project 4">
+                <div class="card-body">
+                  <h5 class="card-title">Beneath The Piles</h5>
+                  <p class="card-text"><small class="text-muted">OpenGL</small></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project 5 -->
+            <div class="col">
+              <div class="card h-100 card-hover" data-bs-toggle="modal" data-bs-target="#project5Modal" style="cursor: pointer;">
+                <img src="EST.png" class="card-img-top" alt="Project 5">
+                <div class="card-body">
+                  <h5 class="card-title">Electrical Safety Test</h5>
+                  <p class="card-text"><small class="text-muted">OpenGL</small></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project 6 -->
+            <div class="col">
+              <div class="card h-100 card-hover" data-bs-toggle="modal" data-bs-target="#project6Modal" style="cursor: pointer;">
+                <img src="DefSim.png" class="card-img-top" alt="Project 6">
+                <div class="card-body">
+                  <h5 class="card-title">Defibrillator Simulation</h5>
+                  <p class="card-text"><small class="text-muted">OpenGL</small></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project 7 -->
+            <div class="col">
+              <div class="card h-100 card-hover" data-bs-toggle="modal" data-bs-target="#project7Modal" style="cursor: pointer;">
+                <img src="JAWI.png" class="card-img-top" alt="Project 7">
+                <div class="card-body">
+                  <h5 class="card-title">Belajar Jawi</h5>
+                  <p class="card-text"><small class="text-muted">Mobile</small></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project 8 -->
+            <div class="col">
+              <div class="card h-100 card-hover" data-bs-toggle="modal" data-bs-target="#project8Modal" style="cursor: pointer;">
+                <img src="Recyclash.jpg" class="card-img-top" alt="Project 7">
+                <div class="card-body">
+                  <h5 class="card-title">Recyclash</h5>
+                  <p class="card-text"><small class="text-muted">Mobile</small></p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Modal for Project 1 -->
+            <div class="modal fade" id="project1Modal" tabindex="-1" aria-labelledby="project1ModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-body p-0">
+                    <div id="carouselProject1" class="carousel slide" data-bs-ride="carousel">
+                      <div class="carousel-inner">
+                        <div class="carousel-item active">
+                          <img src="thera_02.jpg" class="d-block modal-img" alt="Slide 1">
+                        </div>
+                        <div class="carousel-item">
+                          <img src="thera_03.jpg" class="d-block modal-img" alt="Slide 2">
+                        </div>
+                        <div class="carousel-item">
+                          <img src="thera_04.jpg" class="d-block modal-img" alt="Slide 3">
+                        </div>
+                        <div class="carousel-item">
+                          <img src="thera_05.jpg" class="d-block modal-img" alt="Slide 4">
+                        </div>
+                      </div>
+                      <button class="carousel-control-prev" type="button" data-bs-target="#carouselProject1" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      </button>
+                      <button class="carousel-control-next" type="button" data-bs-target="#carouselProject1" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      </button>
+                    </div>
+                    <div class="p-4">
+                      <h4 class="mb-3">Theraputic BiomAdTech</h4>
+                      <p>An AR-based medical education app that allows users to explore therapeutic devices—like defibrillators and infusion pump—in full 3D. It provides interactive, real-time visualization for training and awareness purposes.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal for Project 2 -->
+            <div class="modal fade" id="project2Modal" tabindex="-1" aria-labelledby="project2ModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-body p-0">
+                    <div id="carouselProject2" class="carousel slide" data-bs-ride="carousel">
+                      <div class="carousel-inner">
+                        <div class="carousel-item active">
+                          <img src="vrmed_01.jpg" class="d-block modal-img" alt="Slide 1">
+                        </div>
+                        <div class="carousel-item">
+                          <img src="vrmed_02.jpg" class="d-block modal-img" alt="Slide 2">
+                        </div>
+                        <div class="carousel-item">
+                          <img src="vrmed_03.jpg" class="d-block modal-img" alt="Slide 3">
+                        </div>
+                      </div>
+                      <button class="carousel-control-prev" type="button" data-bs-target="#carouselProject2" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      </button>
+                      <button class="carousel-control-next" type="button" data-bs-target="#carouselProject2" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      </button>
+                    </div>
+                    <div class="p-4">
+                      <h4 class="mb-3">VRMedSim</h4>
+                      <p>A VR simulation platform for immersive medical training. Users can interact with virtual hospital environments and equipment like patient monitors, infusion pumps, and incubators in a hands-on training experience using VR headsets.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal for Project 3 -->
+            <div class="modal fade" id="project3Modal" tabindex="-1" aria-labelledby="project3ModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-body p-0">
+                    <div id="carouselProject3" class="carousel slide" data-bs-ride="carousel">
+                      <div class="carousel-inner">
+                        <div class="carousel-item active">
+                          <img src="rehab_01.jpg" class="d-block modal-img" alt="Slide 1">
+                        </div>
+                        <div class="carousel-item">
+                          <img src="rehab_02.jpg" class="d-block modal-img" alt="Slide 2">
+                        </div>
+                      </div>
+                      <button class="carousel-control-prev" type="button" data-bs-target="#carouselProject3" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      </button>
+                      <button class="carousel-control-next" type="button" data-bs-target="#carouselProject3" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      </button>
+                    </div>
+                    <div class="p-4">
+                      <h4 class="mb-3">Rehab Simulation</h4>
+                      <p>Designed for post-injury therapy in VR, this simulation allows patients to go through rehabilitative exercises in a virtual environment, monitored and assisted by real-time analytics.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal for Project 4 -->
+            <div class="modal fade" id="project4Modal" tabindex="-1" aria-labelledby="project4ModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-body p-0">
+                    <div id="carouselProject4" class="carousel slide" data-bs-ride="carousel">
+                      <div class="carousel-inner">
+                        <div class="carousel-item active">
+                          <img src="btp_01.jpg" class="d-block modal-img" alt="Slide 1">
+                        </div>
+                        <div class="carousel-item">
+                          <img src="btp_02.jpg" class="d-block modal-img" alt="Slide 2">
+                        </div>
+                      </div>
+                      <button class="carousel-control-prev" type="button" data-bs-target="#carouselProject4" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      </button>
+                      <button class="carousel-control-next" type="button" data-bs-target="#carouselProject4" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      </button>
+                    </div>
+                    <div class="p-4">
+                      <h4 class="mb-3">Beneath The Piles</h4>
+                      <p>An OpenGL-based 2D exploration game where players uncover hidden artifacts and stories by digging through virtual trash piles.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal for Project 5 -->
+            <div class="modal fade" id="project5Modal" tabindex="-1" aria-labelledby="project5ModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-body p-0">
+                    <div id="carouselProject5" class="carousel slide" data-bs-ride="carousel">
+                      <div class="carousel-inner">
+                        <div class="carousel-item active">
+                          <img src="est_01.jpg" class="d-block modal-img" alt="Slide 1">
+                        </div>
+                      </div>
+                      <button class="carousel-control-prev" type="button" data-bs-target="#carouselProject5" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      </button>
+                      <button class="carousel-control-next" type="button" data-bs-target="#carouselProject5" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      </button>
+                    </div>
+                    <div class="p-4">
+                      <h4 class="mb-3">Electrical Safety Test</h4>
+                      <p>This OpenGL application simulates electrical safety procedures, helping users learn safe testing practices through interactive steps and feedback.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal for Project 6 -->
+            <div class="modal fade" id="project6Modal" tabindex="-1" aria-labelledby="project6ModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-body p-0">
+                    <div id="carouselProject6" class="carousel slide" data-bs-ride="carousel">
+                      <div class="carousel-inner">
+                        <div class="carousel-item active">
+                          <img src="defsim_01.jpg" class="d-block modal-img" alt="Slide 1">
+                        </div>
+                      </div>
+                      <button class="carousel-control-prev" type="button" data-bs-target="#carouselProject6" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      </button>
+                      <button class="carousel-control-next" type="button" data-bs-target="#carouselProject6" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      </button>
+                    </div>
+                    <div class="p-4">
+                      <h4 class="mb-3">Defibrillator Simulation</h4>
+                      <p>An educational simulation focused on demonstrating the proper use of a defibrillator, incorporating OpenGL-based interaction for realistic user feedback.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal for Project 7 -->
+            <div class="modal fade" id="project7Modal" tabindex="-1" aria-labelledby="project7ModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-body p-0">
+                    <div id="carouselProject7" class="carousel slide" data-bs-ride="carousel">
+                      <div class="carousel-inner">
+                        <div class="carousel-item active">
+                          <img src="jawi_01.jpg" class="d-block modal-img" alt="Slide 1">
+                        </div>
+                      </div>
+                      <button class="carousel-control-prev" type="button" data-bs-target="#carouselProject7" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      </button>
+                      <button class="carousel-control-next" type="button" data-bs-target="#carouselProject7" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      </button>
+                    </div>
+                    <div class="p-4">
+                      <h4 class="mb-3">Belajar Jawi</h4>
+                      <p>A mobile game aimed at teaching kids Jawi letters using interactive tracing, matching games, and sound-based pronunciation practice.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal for Project 8 -->
+            <div class="modal fade" id="project8Modal" tabindex="-1" aria-labelledby="project8ModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-body p-0">
+                    <div id="carouselProject8" class="carousel slide" data-bs-ride="carousel">
+                      <div class="carousel-inner">
+                        <div class="carousel-item active">
+                          <img src="recyclash_01.jpg" class="d-block modal-img" alt="Slide 1">
+                        </div>
+                      </div>
+                      <button class="carousel-control-prev" type="button" data-bs-target="#carouselProject8" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      </button>
+                      <button class="carousel-control-next" type="button" data-bs-target="#carouselProject8" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      </button>
+                    </div>
+                    <div class="p-4">
+                      <h4 class="mb-3">Recyclash</h4>
+                      <p>A mobile action game where players fight to clean up the planet by sorting and recycling trash in fast-paced mini-challenges.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="page-section">
+        <div class="container py-5">
+          <h1 class="text-center">About Page</h1>
+          <p class="text-center">Information about you or your background.</p>
+        </div>
+      </section>
+
+      <section id="contact" class="page-section">
+        <div class="container py-5">
+          <h1 class="text-center">Contact Page</h1>
+          <p class="text-center">Your contact info or form.</p>
+        </div>
+      </section>
+    </main>
+    <!-- Page Sections -->
+    
+    
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3">
+      <small>&copy; 2025 Symocolon Portfolio. All rights reserved.</small>
+    </footer>
+  </div>
+
+  <!-- Interactivity Script -->
+  <script>
+    const container = document.getElementById("dualSection");
+    const left = document.getElementById("left");
+    const right = document.getElementById("right");
+
+    left.addEventListener("mouseenter", () => {
+      container.classList.add("hover-left");
+    });
+    left.addEventListener("mouseleave", () => {
+      container.classList.remove("hover-left");
+    });
+
+    right.addEventListener("mouseenter", () => {
+      container.classList.add("hover-right");
+    });
+    right.addEventListener("mouseleave", () => {
+      container.classList.remove("hover-right");
+    });
+
+
+    const navLinks = document.querySelectorAll(".nav-link");
+    const sections = document.querySelectorAll(".page-section");
+
+    navLinks.forEach(link => {
+      link.addEventListener("click", e => {
+        e.preventDefault();
+
+        const targetId = link.getAttribute("href").substring(1);
+        const targetSection = document.getElementById(targetId);
+
+        navLinks.forEach(l => l.classList.remove("active"));
+        link.classList.add("active");
+
+        sections.forEach(section => {
+          if (section.classList.contains("active")) {
+            section.classList.remove("active");
+            setTimeout(() => {
+              section.style.display = "none";
+              targetSection.style.display = "block";
+              requestAnimationFrame(() => {
+                targetSection.classList.add("active");
+              });
+            }, 500);
+          }
+        });
+      });
+    });
+  </script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
