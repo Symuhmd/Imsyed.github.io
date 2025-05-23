@@ -897,12 +897,11 @@
           
           <div class="row justify-content-center">
             <div class="col-md-8">
-              <form action="https://formsubmit.co/symuhmmd114@gmail.com" method="POST">
-                <!-- Replace with your email above -->
 
-                <!-- Disable CAPTCHA and redirect on success -->
+              <!-- Contact Form -->
+              <form id="contactForm" action="https://formsubmit.co/ajax/symuhmmd114@gmail.com" method="POST">
+                <!-- Disable CAPTCHA -->
                 <input type="hidden" name="_captcha" value="false">
-                <input type="hidden" name="_next" value="https://yourwebsite.com/thank-you.html">
 
                 <div class="mb-3">
                   <label for="name" class="form-label">Your Name</label>
@@ -921,10 +920,19 @@
 
                 <button type="submit" class="btn btn-primary w-100">Send Message</button>
               </form>
+
+              <!-- Thank You Card (Initially Hidden) -->
+              <div id="thankYouCard" class="card shadow-sm text-center p-5 mt-3 d-none">
+                <div class="card-body">
+                  <h4 class="card-title mb-3">Thank You!</h4>
+                  <p class="card-text">Your message has been sent successfully. I'll get back to you as soon as possible.</p>
+                  <a href="#home" class="btn btn-outline-primary mt-3">Back to Home</a>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
-
       </section>
 
       <section id="qualities" class="page-section">
@@ -1073,6 +1081,32 @@
             }, 500);
           }
         });
+      });
+    });
+
+    const form = document.getElementById("contactForm");
+    const thankYouCard = document.getElementById("thankYouCard");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      // Send the form data using FormSubmit (AJAX)
+      fetch(form.action, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name.value,
+          email: form.email.value,
+          message: form.message.value
+        })
+      })
+      .then(response => {
+        if (response.ok) {
+          form.classList.add("d-none");       // Hide form
+          thankYouCard.classList.remove("d-none"); // Show thank you
+        } else {
+          alert("Something went wrong. Please try again.");
+        }
       });
     });
   </script>
