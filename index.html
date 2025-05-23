@@ -926,7 +926,7 @@
           <div class="card-body">
             <h4 class="card-title mb-3">Thank You!</h4>
             <p class="card-text">Your message has been sent successfully. I'll get back to you as soon as possible.</p>
-            <a href="#home" class="btn btn-outline-primary mt-3">Back to Home</a>
+            <button class="btn btn-outline-primary mt-3" onclick="hideThankYouCard()">Close</button>
           </div>
         </div>
 
@@ -1109,6 +1109,11 @@
         }
       });
     });
+
+    function hideThankYouCard() {
+      document.getElementById("thankYouCard").classList.add("d-none");
+      document.getElementById("contactForm").classList.remove("d-none");
+    }
   </script>
 
   <!-- Bootstrap JS -->
